@@ -1,0 +1,77 @@
+@model Gestion_Parc.ViewModel.OtherViewModel
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<hr />
+<div class="container-fluid">
+    <form method="post" asp-action="Create" asp-controller="Other" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-md-4">
+
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="NewOther.MaterialName" class="control-label"></label>
+                    <input asp-for="NewOther.MaterialName" class="form-control" />
+                    <span asp-validation-for="NewOther.MaterialName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NewOther.Brand" class="control-label"></label>
+                    <select class="form-control" asp-for="NewOther.Brand" id="ddRoleName"
+                            asp-items="@(new SelectList(Model.Brands, "BrandName", "BrandName"))">
+                        <option value="">---Select Brand---</option>
+                    </select>
+                    <span asp-validation-for="NewOther.Brand" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NewOther.Quantity" class="control-label"></label>
+                    <input asp-for="NewOther.Quantity" class="form-control" />
+                    <span asp-validation-for="NewOther.Quantity" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="NewOther.Department" class="control-label"></label>
+                    <select class="form-control" asp-for="NewOther.Department" id="ddRoleName"
+                            asp-items="@(new SelectList(Model.Departments, "DepartmentName", "DepartmentName"))">
+                        <option value="">---Select Department---</option>
+                    </select>
+                    <span asp-validation-for="NewOther.Department" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+
+                    <label asp-for="NewOther.Color" class="control-label"></label>
+                    @{
+                        // Retrieve the select list from ViewBag/ViewData
+                        var colors = ViewBag.Colors as List<SelectListItem>;
+                    }
+                    <select asp-for="NewOther.Color" asp-items="@(colors)" class="form-control">
+                        <option value="">-- Select Color --</option>
+                    </select>
+                    <span asp-validation-for="NewOther.Color" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NewOther.Description" class="control-label"></label>
+                    <textarea asp-for="NewOther.Description" class="form-control"></textarea>
+                    <span asp-validation-for="NewOther.Description" class="text-danger"></span>
+                </div>
+                <br />
+            </div>
+            <br />
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-success" />
+                <a asp-action="Index" class="btn btn-dark">Back to List</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

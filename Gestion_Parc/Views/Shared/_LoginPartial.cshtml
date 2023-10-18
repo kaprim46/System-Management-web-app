@@ -1,0 +1,33 @@
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> userManager
+
+<ul class="navbar-nav ms-auto">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li class="nav-item">
+           <img src="/Images/Users/@((await userManager.GetUserAsync(User)).ImageUser)" class="rounded-circle" style="width:50px;height:50px;" alt="User Image" onclick="toggleMenu()"/>
+            <div class="sub-menu-wrap" id="subMenu">
+                <div class="sub-menu">
+                    <div class="user-info">
+                        <img src="/Images/Users/@((await userManager.GetUserAsync(User)).ImageUser)" alt="User Image" />
+                        <h3>@((await userManager.GetUserAsync(User)).FullName)</h3>
+                    </div>
+                    <hr />
+                    
+                    <form asp-controller="Account" asp-action="Logout">
+                        <a href="#" class="sub-menu-link">
+                            <img src="/Images/Icons/logout.png" />
+                            <input style="color:white" type="submit" class="nav-link btn btn-link" value="LogOut" />
+                            <span></span>
+                        </a>
+                     </form>
+                </div>
+            </div>
+        </li>
+        
+    }
+</ul>
+
+

@@ -1,0 +1,262 @@
+@model Gestion_Parc.ViewModel.BrandViewModel
+@inject UserManager<ApplicationUser> userManager
+@inject RoleManager<IdentityRole> roleManager
+@{
+    ViewData["Title"] = "Brands";
+}
+
+<style>
+    /* Style the tab */
+    .tab {
+        overflow: hidden;
+        border: 1px solid #ccc;
+        background-color: #f1f1f1;
+    }
+
+        /* Style the buttons that are used to open the tab content */
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+        }
+
+            /* Change background color of buttons on hover */
+            .tab button:hover {
+                background-color: #ddd;
+            }
+
+            /* Create an active/current tablink class */
+            .tab button.active {
+                background-color: #ccc;
+            }
+
+    /* Style the tab content */
+    .tabcontent {
+        display: none;
+        padding: 6px 12px;
+        border: 1px solid #ccc;
+        border-top: none;
+    }
+</style>
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0 text-dark alert alert-warning">Marques</h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-end alert alert-danger">
+                        <li class="breadcrumb-item"><a href="/Home/Index"><h3>Main Page</h3></a></li>
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex align-items-center justify-content-start">
+                        <h3 class="card-title" style="margin-right:20px">Marques</h3>
+                        @if (User.IsInRole("SERVICE EQUIPEMENT"))
+                            {
+                            <div class="card-tools">
+                                <!-- Button trigger modal -->
+                                <button type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="Reset()">
+                                    Ajouter Nouveau Marque
+                                </button>
+                            </div>
+                            }
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <div class="tab">
+                            <button class="tablinks" onclick="openCity(event, 'Brands')" id="defaultOpen">Marques</button>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <button class="tablinks" onclick="openCity(event, 'LogBrands')">Log departments</button>
+                            }
+
+                        </div>
+                        @if (User.IsInRole("SERVICE EQUIPEMENT") || User.IsInRole("Admin"))
+                        {
+                            <div id="Brands" class="tabcontent">
+                                <table id="TableDBrands" class="table table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <td>Marques</td>
+                                            @if (User.IsInRole("SERVICE EQUIPEMENT"))
+                                                {
+                                                <td>Events</td>
+                                                }
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var brand in Model.Brands)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    @switch (brand.BrandName)
+                                                    {
+                                                        case "Dell":
+                                                            <span class="badge bg-success" style="width: 300px; height: 25px ">@brand.BrandName</span>
+                                                            break;
+                                                        case "Apple":
+                                                            <span class="badge bg-warning" style="width: 300px; height: 25px ">@brand.BrandName</span>
+                                                            break;
+                                                        default:
+                                                            <span class="badge bg-secondary" style="width: 300px; height: 25px ">@brand.BrandName</span>
+                                                            break;
+                                                    }
+                                                </td>
+                                                @if (User.IsInRole("SERVICE EQUIPEMENT"))
+                                                {
+                                                    <td>
+                                                        <input type="button" class="btn btn-info" onclick="Edit('@brand.BrandId', '@brand.BrandName')" value="Modifier" data-bs-toggle="modal" data-bs-target="#exampleModal" />
+                                                        <input type="button" class="btn btn-danger" onclick="Delete('@brand.BrandId')" value="Supprimer" />
+                                                    </td>
+                                                }
+
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+
+
+                        @if (User.IsInRole("Admin"))
+                        {
+
+
+                            <div id="LogBrands" class="tabcontent">
+                                <table id="TableLogBrands" class="table table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <td>Utlilisateur</td>
+                                            <td>Marque</td>
+                                            <td>Action</td>
+                                            <td>Date</td>
+                                            <td>Events</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var brand in Model.LogBrands)
+                                        {
+                                            <tr>
+                                                <td>@((await userManager.FindByIdAsync(brand.UserId.ToString()))?.FullName)</td>
+                                                <td>@brand.Brand?.BrandName</td>
+                                                <td>
+                                                    @switch (brand.Action)
+                                                    {
+                                                        case "Create":
+                                                            <span class="badge bg-success" style="width: 300px; height: 25px ">@brand.Action</span>
+                                                            break;
+                                                        case "Update":
+                                                            <span class="badge bg-warning" style="width: 300px; height: 25px ">@brand.Action</span>
+                                                            break;
+                                                        case "Delete":
+                                                            <span class="badge bg-danger" style="width: 300px; height: 25px ">@brand.Action</span>
+                                                            break;
+                                                    }
+                                                </td>
+                                                <td>@brand.Date</td>
+                                                <td>
+                                                    <input type="button" class="btn btn-danger" onclick="DeleteLog('@brand.Id')" value="Supprimer" />
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+
+
+
+                        }
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </section>
+    <!-- /.content -->
+</div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="title">Ajouter Nouveau Marque</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="Brands" asp-controller="Brand" method="post">
+                    <input type="text" hidden class="form-control" asp-for="NNewBrand.BrandId" id="brandId" />
+
+                    <div class="form-group">
+                        <label asp-for="NNewBrand.BrandName" class="label-control">Department Name</label>
+                        <input type="text" class="form-control" asp-for="NNewBrand.BrandName" id="brandName" />
+                        <span asp-validation-for="NNewBrand.BrandName" class="text-danger"></span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                        <input type="submit" class="btn btn-success" value="Enregistrer" id="btnSave" />
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+
+    @if (!string.IsNullOrEmpty(Context.Session.GetString(Helper.MsgType)))
+    {
+        if (Context.Session.GetString("msgType") == Helper.Success)
+        {
+            <script>
+                Swal.fire({
+                    icon: '@Helper.Success',
+                    title: '@Context.Session.GetString(Helper.Title)',
+                    text: '@Html.Raw(Context.Session.GetString(Helper.Msg))',
+                    ConfirmButtonText: 'Done'
+
+                })
+            </script>
+
+        }
+        else
+        {
+            <script>
+                Swal.fire({
+                    icon: '@Helper.Error',
+                    title: '@Context.Session.GetString(Helper.Title)',
+                    text: '@Html.Raw(Context.Session.GetString(Helper.Msg))',
+                    ConfirmButtonText: 'Done'
+
+                })
+            </script>
+        }
+        Context.Session.SetString("msgType", "");
+    }
+}
+
+<script src="~/Modules/Brands.js"></script>

@@ -1,0 +1,65 @@
+@model Gestion_Parc.ViewModel.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+<p>
+    <a asp-action="Register" class="btn btn-primary">Create New</a>
+</p>
+<hr />
+
+<table class="table table-secondary table-striped table-hover table-striped">
+    <thead>
+        <tr>
+            <th>Nom et Prenom</th>
+            <th>Image</th>
+            <th>Service</th>
+            <th>Department</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Events</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var user in Model.Users)
+{
+        <tr>
+            <td>@user.FullName</td>
+            <td>
+                <img src="/Images/Users/@user.ImageUser" class="rounded-circle" style="width:50px;height:50px;"/>
+            </td>
+            <td>
+                @switch (user.Role)
+                {
+                    case "Admin":
+                        <span class="badge bg-danger" style="width: 170px;padding:7px">@user.Role</span>
+                        break;
+                    case "SERVICE INFORMATIQUE":
+                        <span class="badge bg-success" style="width: 170px; padding: 7px ">@user.Role</span>
+                        break;
+                    case "SERVICE EQUIPEMENT":
+                        <span class="badge bg-warning" style="width: 170px; padding: 7px ">@user.Role</span>
+                        break;
+                    default:
+                        <span class="badge bg-secondary" style="width: 170px; padding: 7px ">@user.Role</span>
+                        break;
+                }
+            </td>
+            <td>@user.Department</td>
+            <td>@user.Email</td>
+            <td>
+                <input type="checkbox" disabled checked="@user.ActiveUser" style="width:20px; height:20px" />
+            </td>
+            <td>
+                @Html.ActionLink("Modifier", "Edit", new { id = user.Id }, new { @class = "btn btn-primary" })
+                @Html.ActionLink("Supprimer", "Delete", new { id = user.Id }, new { @class = "btn btn-danger" })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+
+
+
+  

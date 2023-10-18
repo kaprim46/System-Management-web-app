@@ -1,0 +1,127 @@
+﻿@model Gestion_Parc.ViewModel.ComputerViewModel
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Modifier</h1>
+
+<hr />
+<div class="container-fluid">
+    <form method="post">
+        <div class="row">
+            <div class="col-md-6">
+
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <input asp-for="NewComputer.MaterialId" hidden class="form-control" />
+                    <label asp-for="NewComputer.MaterialName" class="control-label"></label>
+                    <input asp-for="NewComputer.MaterialName" class="form-control" />
+                    <span asp-validation-for="NewComputer.MaterialName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NewComputer.Memory" class="control-label"></label>
+                    <input asp-for="NewComputer.Memory" class="form-control" />
+                    <span asp-validation-for="NewComputer.Memory" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NewComputer.DiskSpace" class="control-label"></label>
+                    <input asp-for="NewComputer.DiskSpace" class="form-control" />
+                    <span asp-validation-for="NewComputer.DiskSpace" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NewComputer.Cpu" class="control-label"></label>
+                    @{
+                        // Retrieve the select list from ViewBag/ViewData
+                        var Cpu = ViewBag.Cpu as List<SelectListItem>;
+                    }
+                    <select asp-for="NewComputer.Cpu" asp-items="@(Cpu)" class="form-control">
+                    </select>
+                    <span asp-validation-for="NewComputer.Cpu" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NewComputer.Screen" class="control-label"></label>
+                    <select asp-for="NewComputer.Screen" asp-items="@ViewBag.Screens" class="form-control">
+                    </select>
+                    <span asp-validation-for="NewComputer.Screen" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NewComputer.Brand" class="control-label"></label>
+                    <select class="form-control" asp-for="NewComputer.Brand" id="ddRoleName"
+                            asp-items="@(new SelectList(Model.Brands, "BrandName", "BrandName"))">
+                        <option value="">---Choisir Marque---</option>
+                    </select>
+                    <span asp-validation-for="NewComputer.Brand" class="text-danger"></span>
+                </div>
+                <br />
+
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="NewComputer.OS" class="control-label"></label>
+                    @{
+                        // Retrieve the select list from ViewBag/ViewData
+                        var Os = ViewBag.Os as List<SelectListItem>;
+                    }
+                    <select asp-for="NewComputer.OS" asp-items="@(Os)" class="form-control">
+                    </select>
+
+                    <span asp-validation-for="NewComputer.OS" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NewComputer.Processor" class="control-label"></label>
+                    <input asp-for="NewComputer.Processor" class="form-control" />
+                    <span asp-validation-for="NewComputer.Processor" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NewComputer.Quantity" class="control-label"></label>
+                    <input asp-for="NewComputer.Quantity" class="form-control" />
+                    <span asp-validation-for="NewComputer.Quantity" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="NewComputer.Department" class="control-label"></label>
+                    <select class="form-control" asp-for="NewComputer.Department" id="ddRoleName"
+                            asp-items="@(new SelectList(Model.Departments, "DepartmentName", "DepartmentName"))">
+                        <option value="">---Choisir Department---</option>
+                    </select>
+                    <span asp-validation-for="NewComputer.Department" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NewComputer.GraphicsCard" class="control-label"></label>
+                    <select asp-for="NewComputer.GraphicsCard" asp-items="@ViewBag.Graphics" class="form-control">
+                        <option value="">---Choisir Carte graphique---</option>
+                    </select>
+
+                    <span asp-validation-for="NewComputer.GraphicsCard" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+
+                    <label asp-for="NewComputer.Color" class="control-label"></label>
+                    @{
+                        // Retrieve the select list from ViewBag/ViewData
+                        var colors = ViewBag.Colors as List<SelectListItem>;
+                    }
+                    <select asp-for="NewComputer.Color" asp-items="@(colors)" class="form-control">
+                        <option value="">---Choisir Couleur---</option>
+                    </select>
+                    <span asp-validation-for="NewComputer.Color" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NewComputer.Description" class="control-label"></label>
+                    <textarea asp-for="NewComputer.Description" class="form-control"></textarea>
+                    <span asp-validation-for="NewComputer.Description" class="text-danger"></span>
+                </div>
+
+            </div>
+            <br />
+            <div class="form-group">
+                <input type="submit" value="Modifier" class="btn btn-success" />
+                <a asp-action="Index" class="btn btn-dark">Retour a la liste</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

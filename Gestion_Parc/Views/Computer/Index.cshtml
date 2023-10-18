@@ -1,0 +1,400 @@
+@model Gestion_Parc.ViewModel.ComputerViewModel
+@inject UserManager<ApplicationUser> userManager
+@inject RoleManager<IdentityRole> roleManager
+@{
+    ViewData["Title"] = "Computers";
+}
+<style>
+    /* Style the tab */
+    .tab {
+        overflow: hidden;
+        border: 1px solid #ccc;
+        background-color: #f1f1f1;
+    }
+
+        /* Style the buttons that are used to open the tab content */
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+        }
+
+            /* Change background color of buttons on hover */
+            .tab button:hover {
+                background-color: #ddd;
+            }
+
+            /* Create an active/current tablink class */
+            .tab button.active {
+                background-color: #ccc;
+            }
+
+    /* Style the tab content */
+    .tabcontent {
+        display: none;
+        padding: 6px 12px;
+        border: 1px solid #ccc;
+        border-top: none;
+    }
+</style>
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0 text-dark alert alert-warning">Ordinateurs</h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-end alert alert-danger">
+                        <li class="breadcrumb-item"><a href="/Home/Index"><h3>Main Page</h3></a></li>
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex align-items-center justify-content-start">
+                        <h3 class="card-title" style="margin-right:20px">Ordinateurs</h3>
+                        <div class="card-tools">
+                            <!-- Button trigger modal -->
+                            @if (User.IsInRole("SERVICE EQUIPEMENT"))
+                            {
+                                <a class="btn btn-outline-primary rounded-pill" asp-action="Create" asp-controller="Computer">
+                                    Ajouter Nouveau Ordinateur
+                                </a>
+                            }
+
+                        </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <div class="tab">
+                            <button class="tablinks" onclick="openCity(event, 'Computers')" id="defaultOpen">Computers</button>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <button class="tablinks" onclick="openCity(event, 'LogComputers')">Log Computers</button>
+                            }
+                        </div>
+                        <div id="Computers" class="tabcontent">
+
+                            <table id="TableComputers" class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <td>Nom</td>
+                                        <td>Couleur</td>
+                                        <td>Department</td>
+                                        <td>Marque</td>
+                                        <td>Quantite</td>
+                                        @if (User.IsInRole("SERVICE EQUIPEMENT"))
+                                            {
+                                            <td>Events</td>
+                                            }
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var computer in Model.Computers)
+                                    {
+                                        <tr>
+                                            <td>@computer.MaterialName</td>
+                                            <td>@computer.Color</td>
+                                            <td>@computer.Department</td>
+
+                                            <td>
+                                                @switch (computer.Brand)
+                                                {
+                                                    case "Dell":
+                                                        <span class="badge bg-success" style="width: 150px; height: 25px ">@computer.Brand</span>
+                                                        break;
+                                                    case "HP":
+                                                        <span class="badge bg-warning" style="width: 150px; height: 25px ">@computer.Brand</span>
+                                                        break;
+                                                    case "Lenovo":
+                                                        <span class="badge bg-info" style="width: 150px; height: 25px ">@computer.Brand</span>
+                                                        break;
+                                                    default:
+                                                        <span class="badge bg-secondary" style="width: 150px; height: 25px ">@computer.Brand</span>
+                                                        break;
+                                                }
+                                            </td>
+                                            <td>@computer.Quantity</td>
+                                            @if (User.IsInRole("SERVICE EQUIPEMENT"))
+                                                {
+                                            <td>
+                                                @Html.ActionLink("Modifier", "Edit", new { id = computer.MaterialId }, new { @class = "btn btn-primary" })
+                                                <input type="button" class="btn btn-warning" onclick="Detail('@computer.MaterialId', '@computer.MaterialName', '@computer.Brand', '@computer.Description',
+                                                      '@computer.DiskSpace', '@computer.GraphicsCard', '@computer.Processor', '@computer.Color', '@computer.Cpu', '@computer.Memory', '@computer.OS',
+                                                       '@computer.Quantity', '@computer.Screen', '@computer.Department')"
+                                                       value="Details" data-bs-toggle="modal" data-bs-target="#exampleModal"/>
+                                                <input type="button" class="btn btn-danger" onclick="Delete('@computer.MaterialId')" value="Supprimer" />
+                                                
+                                                 
+                                            </td>
+                                                }
+                                        </tr>
+                                    }
+
+                                </tbody>
+                            </table>
+                        </div>
+                        @if (User.IsInRole("Admin"))
+                        {
+
+
+                            <div id="LogComputers" class="tabcontent">
+                                <table id="TableLogComputers" class="table table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <td>Utlisateur</td>
+                                            <td>Ordinateur</td>
+                                            <td>Department</td>
+                                            <td>Action</td>
+                                            <td>Date</td>
+                                            <td>Events</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var logComputer in Model.LogComputers)
+                                        {
+                                            <tr>
+                                                <td>@((await userManager.FindByIdAsync(logComputer.UserId.ToString()))?.FullName)</td>
+                                                <td>@logComputer.Computer.MaterialName</td>
+                                                <td>@logComputer.Computer.Department</td>
+                                                <td>
+                                                    @switch (logComputer.Action)
+                                                    {
+                                                        case "Create":
+                                                            <span class="badge bg-success" style="width: 300px; height: 25px ">@logComputer.Action</span>
+                                                            break;
+                                                        case "Update":
+                                                            <span class="badge bg-warning" style="width: 300px; height: 25px ">@logComputer.Action</span>
+                                                            break;
+                                                        case "Delete":
+                                                            <span class="badge bg-danger" style="width: 300px; height: 25px ">@logComputer.Action</span>
+                                                            break;
+                                                    }
+                                                </td>
+                                                <td>@logComputer.Date</td>
+                                                <td>
+                                                    <input type="button" class="btn btn-danger" onclick="DeleteLog('@logComputer.Id')" value="Supprimer" />
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+
+
+
+                        }
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </section>
+    <!-- /.content -->
+</div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Details d'ordinateur</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+          <div class="row">
+              <div class="col-md-6">
+                  <div class="row">
+                      <div class="row mb-1">
+                          <input type="text" class="form-control" hidden asp-for="NewComputer.MaterialId" id="materialId" />
+                          <div class="col-sm-4">
+                              <p class="mb-0">@Html.DisplayNameFor(model => model.NewComputer.MaterialName)</p>
+                          </div>
+                          <div class="col-sm-8">
+                              <input type="text" class="form-control" asp-for="@Computers.MaterialName" id="materialName" readonly />
+                          </div>
+                      </div>
+                      <div class="row mb-1">
+                          <div class="col-sm-4">
+                              <p class="mb-0">@Html.DisplayNameFor(model => model.NewComputer.OS)</p>
+                          </div>
+                          <div class="col-sm-8">
+                              <input type="text" class="form-control" asp-for="@Computers.OS" id="os" readonly />
+                          </div>
+                      </div>
+                      <div class="row mb-1">
+                          <div class="col-sm-4">
+                              <p class="mb-0">@Html.DisplayNameFor(model => model.NewComputer.Memory)</p>
+                          </div>
+                          <div class="col-sm-8">
+                              <input type="text" class="form-control" asp-for="@Computers.Memory" id="memory" readonly />
+                          </div>
+                      </div>
+                      <div class="row mb-1">
+                          <div class="col-sm-4">
+                              <p class="mb-0">@Html.DisplayNameFor(model => model.NewComputer.Cpu)</p>
+                          </div>
+                          <div class="col-sm-8">
+                              <input type="text" class="form-control" asp-for="@Computers.Cpu" id="cpu" readonly />
+                          </div>
+                      </div>
+                      <div class="row mb-1">
+                          <div class="col-sm-4">
+                              <p class="mb-0">@Html.DisplayNameFor(model => model.NewComputer.Department)</p>
+                          </div>
+                          <div class="col-sm-8">
+                              <input type="text" class="form-control" asp-for="@Computers.Department" id="department" readonly />
+                          </div>
+                      </div>
+                      <div class="row mb-1">
+                          <div class="col-sm-4">
+                              <p class="mb-0">@Html.DisplayNameFor(model => model.NewComputer.Color)</p>
+                          </div>
+                          <div class="col-sm-8">
+                              <input type="text" class="form-control" asp-for="@Computers.Color" id="color" readonly />
+                          </div>
+                      </div>
+                      
+                  </div>
+              </div>
+              <div class="col-md-6">
+                  <div class="row">
+                      <div class="row mb-1">
+                          <div class="col-sm-4">
+                              <p class="mb-0">@Html.DisplayNameFor(model => model.NewComputer.GraphicsCard)</p>
+                          </div>
+                          <div class="col-sm-8">
+                              <input type="text" class="form-control" asp-for="@Computers.GraphicsCard" id="graphicsCard" readonly />
+                          </div>
+                      </div>
+                      <div class="row mb-1">
+                          <div class="col-sm-4">
+                              <p class="mb-0">@Html.DisplayNameFor(model => model.NewComputer.Processor)</p>
+                          </div>
+                          <div class="col-sm-8">
+                              <input type="text" class="form-control" asp-for="@Computers.Processor" id="processor" readonly />
+                          </div>
+                      </div>
+                      <div class="row mb-1">
+                          <div class="col-sm-4">
+                              <p class="mb-0">@Html.DisplayNameFor(model => model.NewComputer.Quantity)</p>
+                          </div>
+                          <div class="col-sm-8">
+                              <input type="text" class="form-control" asp-for="@Computers.Quantity" id="quantity" readonly />
+                          </div>
+                      </div>
+                      <div class="row mb-1">
+                          <div class="col-sm-4">
+                              <p class="mb-0">@Html.DisplayNameFor(model => model.NewComputer.Brand)</p>
+                          </div>
+                          <div class="col-sm-8">
+                              <input type="text" class="form-control" asp-for="@Computers.Brand" id="brand" readonly />
+                          </div>
+                      </div>
+                      <div class="row mb-1">
+                          <div class="col-sm-4">
+                              <p class="mb-0">@Html.DisplayNameFor(model => model.NewComputer.DiskSpace)</p>
+                          </div>
+                          <div class="col-sm-8">
+                              <input type="text" class="form-control" asp-for="@Computers.DiskSpace" id="diskSpace" readonly />
+                          </div>
+                      </div>
+                      <div class="row mb-1">
+                          <div class="col-sm-4">
+                              <p class="mb-0">@Html.DisplayNameFor(model => model.NewComputer.Screen)</p>
+                          </div>
+                          <div class="col-sm-8">
+                              <input type="text" class="form-control" asp-for="@Computers.Screen" id="screen" readonly />
+                          </div>
+                      </div>
+                      <div class="row mb-1">
+                          <div class="col-sm-4">
+                              <p class="mb-0">@Html.DisplayNameFor(model => model.NewComputer.Description)</p>
+                          </div>
+                          <div class="col-sm-8">
+                              <textarea class="form-control" asp-for="@Computers.Description" id="description" readonly></textarea>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+              </div>
+          </div>
+  </div>
+</div>
+
+
+@section Scripts{
+
+    @if (!string.IsNullOrEmpty(Context.Session.GetString(Helper.MsgType)))
+    {
+        if (Context.Session.GetString("msgType") == Helper.Success)
+        {
+            <script>
+                Swal.fire({
+                    icon: '@Helper.Success',
+                    title: '@Context.Session.GetString(Helper.Title)',
+                    text: '@Html.Raw(Context.Session.GetString(Helper.Msg))',
+                    ConfirmButtonText: 'Done'
+
+                })
+            </script>
+
+        }
+        else
+        {
+            <script>
+                Swal.fire({
+                    icon: '@Helper.Error',
+                    title: '@Context.Session.GetString(Helper.Title)',
+                    text: '@Html.Raw(Context.Session.GetString(Helper.Msg))',
+                    ConfirmButtonText: 'Done'
+
+                })
+            </script>
+        }
+        Context.Session.SetString("msgType", "");
+    }
+}
+<script>
+    function Detail(id, name, brand, description, diskSpace, graphicsCard, processor, color, cpu, memory, os, quantity, screen, department) {
+        document.getElementById("materialId").value = id;
+        document.getElementById("materialName").value = name;
+        document.getElementById("brand").value = brand;
+        document.getElementById("description").value = description;
+        document.getElementById("diskSpace").value = diskSpace;
+        document.getElementById("graphicsCard").value = graphicsCard;
+        document.getElementById("processor").value = processor;
+        document.getElementById("color").value = color;
+        document.getElementById("cpu").value = cpu;
+        document.getElementById("memory").value = memory;
+        document.getElementById("os").value = os;
+        document.getElementById("quantity").value = quantity;
+        document.getElementById("screen").value = screen;
+        document.getElementById("department").value = department;
+    }
+    
+</script>
+<script src="~/Modules/Computers.js"></script>
+
+

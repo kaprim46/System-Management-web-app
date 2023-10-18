@@ -1,0 +1,44 @@
+﻿<Properties StartupConfiguration="{63BF91D1-23B2-4117-A0DB-45B480883D09}|Identtiy2">
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.ItemProperties.Gestion__Parc PreferredExecutionTarget="/Applications/Safari.app" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Identtiy2/Views/Role/Roles.cshtml">
+    <Files>
+      <File FileName="Identtiy2/Views/Shared/_Layout.cshtml" Line="210" Column="36" IsPinned="True" />
+      <File FileName="Identtiy2/Seed/DefaultUser.cs" />
+      <File FileName="Identtiy2/Migrations/20230618161629_IntialDatabase.cs" />
+      <File FileName="Identtiy2/Controllers/HomeController.cs" />
+      <File FileName="Identtiy2/Views/Computer/Index.cshtml" />
+      <File FileName="Identtiy2/Views/Brand/Brands.cshtml" />
+      <File FileName="Identtiy2/Views/Server/Index.cshtml" />
+      <File FileName="Identtiy2/Views/Printer/Index.cshtml" />
+      <File FileName="Identtiy2/Views/Other/Index.cshtml" />
+      <File FileName="Identtiy2/Models/Material.cs" />
+      <File FileName="Identtiy2/Models/Printer.cs" />
+      <File FileName="Identtiy2/Views/Account/Login.cshtml" />
+      <File FileName="Identtiy2/Views/Shared/_LoginPartial.cshtml" />
+      <File FileName="Identtiy2/Views/Role/Roles.cshtml" Line="58" Column="75" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="Identtiy2" expanded="True">
+            <Node name="Identtiy2" expanded="True">
+              <Node name="Views" expanded="True">
+                <Node name="Role" expanded="True">
+                  <Node name="Roles.cshtml" selected="True" />
+                </Node>
+                <Node name="Shared" expanded="True" />
+              </Node>
+              <Node name="wwwroot" expanded="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <Breakpoint file="/Users/marouanekrizi/Projects/Identtiy2/Identtiy2/IRepository/ServiceRepository/ServiceLogDepartment.cs" relfile="Identtiy2/IRepository/ServiceRepository/ServiceLogDepartment.cs" line="85" column="1" />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+</Properties>

@@ -1,0 +1,71 @@
+@model Gestion_Parc.ViewModel.EditViewModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h2>Modifier</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post" asp-action="Edit" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <input asp-for="Code" hidden class="form-control" />
+                <label asp-for="FullName" class="control-label"></label>
+                <input asp-for="FullName" class="form-control" />
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ImageUser" class="control-label"></label>
+                <input asp-for="ImageUser" class="form-control" type="file" />
+                <input asp-for="ImageUser" class="form-control" hidden />
+                <img src="/Images/Users/@Model.ImageUser" class="img-thumbnail" style="width:100px;height:100px" />
+                <span asp-validation-for="RoleName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RoleName" class="control-label"></label>
+                <select class="form-control" asp-for="RoleName" id="ddRoleName"
+                        asp-items="@(new SelectList(ViewBag.RolesList , "Name", "Name"))">
+                </select>
+                <span asp-validation-for="ImageUser" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DepartmentName" class="control-label"></label>
+                <select class="form-control" asp-for="DepartmentName" id="ddRoleName"
+                        asp-items="@(new SelectList(ViewBag.DepartmentList , "DepartmentName", "DepartmentName"))">
+                </select>
+                <span asp-validation-for="DepartmentName" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="ActiveUser" /> @Html.DisplayNameFor(model => model.ActiveUser)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" class="control-label"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ComparePassword" class="control-label"></label>
+                <input asp-for="ComparePassword" class="form-control" />
+                <span asp-validation-for="ComparePassword" class="text-danger"></span>
+            </div>
+            <br />
+            <div class="form-group">
+                <input type="submit" value="Enregistrer" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-dark">Retour a la liste</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

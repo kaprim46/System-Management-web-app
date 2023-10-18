@@ -1,0 +1,153 @@
+@model Gestion_Parc.ViewModel.RoleViewModel
+@{
+    ViewData["Title"] = "Services";
+}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0 text-dark alert alert-warning">Services</h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-end alert alert-danger">
+                        <li class="breadcrumb-item"><a href="/Admin/Home/Index"><h3>Main Page</h3></a></li>
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex align-items-center justify-content-start">
+                        <h3 class="card-title" style="margin-right:20px">Services</h3>
+                        <div class="card-tools">
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="Reset()">
+                                Ajouter Nouveau Service
+                            </button>
+                        </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <table id="TableRoles" class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <td>Service</td>
+                                    <td>Events</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Roles)
+                                {
+                                    <tr>
+                                        <td>
+                                            @switch (item.Name)
+                                            {
+                                                case "Admin":
+                                                    <span class="badge bg-danger" style="width: 300px; height: 25px">@item.Name</span>
+                                                    break;
+                                                case "SERVICE INFORMATIQUE":
+                                                    <span class="badge bg-success" style="width: 300px; height: 25px ">@item.Name</span>
+                                                    break;
+                                                case "SERVICE EQUIPEMENT":
+                                                    <span class="badge bg-warning" style="width: 300px; height: 25px ">@item.Name</span>
+                                                    break;
+                                                default:
+                                                    <span class="badge bg-secondary" style="width: 300px; height: 25px ">@item.Name</span>
+                                                    break;
+                                            }
+                                        </td>
+                                        <td>
+                                            <input type="button" class="btn btn-info" onclick="Edit('@item.Id', '@item.Name')" value="Edite" data-bs-toggle="modal" data-bs-target="#exampleModal" />
+                                            <input type="button" class="btn btn-danger" onclick="Delete('@item.Id')" value="Supprimer" />
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </section>
+    <!-- /.content -->
+</div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="title">Creer Nouveau Service</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="Roles" asp-controller="Role" method="post">
+                    <div class="form-group">
+                        <input type="text" hidden class="form-control" asp-for="NewRole.RoleId" id="roleId" />
+                        <label asp-for="NewRole.RoleName" class="label-control">Service Name</label>
+                        <input type="text" class="form-control" asp-for="NewRole.RoleName" id="roleName" />
+                        <span asp-validation-for="NewRole.RoleName" class="text-danger"></span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                        <input type="submit" class="btn btn-success" value="Enregistrer" id="btnSave" />
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+
+ @if (!string.IsNullOrEmpty(Context.Session.GetString(Helper.MsgType)))
+  {
+        if (Context.Session.GetString("msgType") == Helper.Success)
+        {
+            <script>
+                Swal.fire({
+                    icon: '@Helper.Success',
+                    title: '@Context.Session.GetString(Helper.Title)',
+                    text: '@Html.Raw(Context.Session.GetString(Helper.Msg))',
+                    ConfirmButtonText: 'Done'
+
+                })
+            </script>
+                                                
+        }
+        else
+        {
+            <script>
+                Swal.fire({
+                    icon: '@Helper.Error',
+                    title: '@Context.Session.GetString(Helper.Title)',
+                    text: '@Html.Raw(Context.Session.GetString(Helper.Msg)))',
+                    ConfirmButtonText: 'Done'
+
+                })
+            </script>
+        }
+       Context.Session.SetString("msgType", "");
+  }
+}
+<script src="~/Modules/Roles.js"></script>
+
+

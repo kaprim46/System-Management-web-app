@@ -1,0 +1,116 @@
+@model Gestion_Parc.ViewModel.PrinterViewModel
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<hr />
+<div class="container-fluid">
+    <form method="post" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-md-6">
+
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="NewPrinter.MaterialName" class="control-label"></label>
+                    <input asp-for="NewPrinter.MaterialName" class="form-control" />
+                    <span asp-validation-for="NewPrinter.MaterialName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NewPrinter.MaximumPrintSpeed" class="control-label"></label>
+                    <input asp-for="NewPrinter.MaximumPrintSpeed" class="form-control" />
+                    <span asp-validation-for="NewPrinter.MaximumPrintSpeed" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NewPrinter.MaxPrintspeed" class="control-label"></label>
+                    <input asp-for="NewPrinter.MaxPrintspeed" class="form-control" />
+                    <span asp-validation-for="NewPrinter.MaxPrintspeed" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+
+                    <label asp-for="NewPrinter.PrintingTechnology" class="control-label"></label>
+                    @{
+                        // Retrieve the select list from ViewBag/ViewData
+                        var Technology = ViewBag.Technology as List<SelectListItem>;
+                    }
+                    <select asp-for="NewPrinter.PrintingTechnology" asp-items="@(Technology)" class="form-control">
+                        <option value="">-- Select Printing Technology --</option>
+                    </select>
+                    <span asp-validation-for="NewPrinter.PrintingTechnology" class="text-danger"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label asp-for="NewPrinter.Brand" class="control-label"></label>
+                    <select class="form-control" asp-for="NewPrinter.Brand" id="ddRoleName"
+                            asp-items="@(new SelectList(Model.Brands, "BrandName", "BrandName"))">
+                        <option value="">---Select Brand---</option>
+                    </select>
+                    <span asp-validation-for="NewPrinter.Brand" class="text-danger"></span>
+                </div>
+                <br />
+
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="NewPrinter.PrinterOutput" class="control-label"></label>
+                    @{
+                        // Retrieve the select list from ViewBag/ViewData
+                        var printerOutput = ViewBag.Output as List<SelectListItem>;
+                    }
+                    <select asp-for="NewPrinter.PrinterOutput" asp-items="@(printerOutput)" class="form-control">
+                        <option value="">-- Select Printer Output --</option>
+                    </select>
+
+                    <span asp-validation-for="NewPrinter.PrinterOutput" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NewPrinter.Quantity" class="control-label"></label>
+                    <input asp-for="NewPrinter.Quantity" class="form-control" />
+                    <span asp-validation-for="NewPrinter.Quantity" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="NewPrinter.Department" class="control-label"></label>
+                    <select class="form-control" asp-for="NewPrinter.Department" id="ddRoleName"
+                            asp-items="@(new SelectList(Model.Departments, "DepartmentName", "DepartmentName"))">
+                        <option value="">---Select Department---</option>
+                    </select>
+                    <span asp-validation-for="NewPrinter.Department" class="text-danger"></span>
+                </div>
+                
+                <div class="form-group">
+
+                    <label asp-for="NewPrinter.Color" class="control-label"></label>
+                    @{
+                        // Retrieve the select list from ViewBag/ViewData
+                        var colors = ViewBag.Colors as List<SelectListItem>;
+                    }
+                    <select asp-for="NewPrinter.Color" asp-items="@(colors)" class="form-control">
+                        <option value="">-- Select Color --</option>
+                    </select>
+                    <span asp-validation-for="NewPrinter.Color" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NewPrinter.Description" class="control-label"></label>
+                    <textarea asp-for="NewPrinter.Description" class="form-control" ></textarea>
+                    <span asp-validation-for="NewPrinter.Description" class="text-danger"></span>
+                </div>
+
+            </div>
+            <br />
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-success" />
+                <a asp-action="Index" class="btn btn-dark">Back to List</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,73 @@
+@model Gestion_Parc.ViewModel.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<h1>Registre</h1>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="NewRegister.FullName" class="control-label"></label>
+                <input asp-for="NewRegister.FullName" class="form-control" />
+                <span asp-validation-for="NewRegister.FullName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NewRegister.Email" class="control-label"></label>
+                <input asp-for="NewRegister.Email" class="form-control" />
+                <span asp-validation-for="NewRegister.Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NewRegister.ImageUser" class="control-label"></label>
+                <input asp-for="NewRegister.ImageUser" class="form-control" type="file" />
+                <span asp-validation-for="NewRegister.ImageUser" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="NewRegister.ActiveUser" /> @Html.DisplayNameFor(model => model.NewRegister.ActiveUser)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="NewRegister.RoleName" class="control-label"></label>
+                <select class="form-control" asp-for="NewRegister.RoleName" id="ddRoleName"
+                        asp-items="@(new SelectList(Model.Roles, "Name", "Name"))">
+                    <option value="">---Select Role---</option>
+                </select>
+                <span asp-validation-for="NewRegister.RoleName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="NewRegister.DepartmentName" class="control-label"></label>
+                <select class="form-control" asp-for="NewRegister.DepartmentName" id="ddRoleName"
+                        asp-items="@(new SelectList(ViewBag.Department, "DepartmentName", "DepartmentName"))">
+                    <option value="">---Select Department---</option>
+                </select>
+                <span asp-validation-for="NewRegister.DepartmentName" class="text-danger"></span>
+            </div>
+
+
+            <br />
+            <div class="form-group">
+                <label asp-for="NewRegister.Password" class="control-label"></label>
+                <input asp-for="NewRegister.Password" class="form-control" type="password" />
+                <span asp-validation-for="NewRegister.Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NewRegister.ComparePassword" class="control-label"></label>
+                <input asp-for="NewRegister.ComparePassword" class="form-control" type="password" />
+                <span asp-validation-for="NewRegister.ComparePassword" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Ajouter" class="btn btn-success" />
+                <a asp-action="Index" class="btn btn-dark">Retour a la liste</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

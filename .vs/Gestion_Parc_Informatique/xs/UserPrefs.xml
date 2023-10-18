@@ -1,0 +1,37 @@
+﻿<Properties StartupConfiguration="{F68F7B6C-8BFC-450D-B83B-736A6FEDCE2C}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Gestion_Parc/Controllers/AccountController.cs">
+    <Files>
+      <File FileName="Gestion_Parc/Views/Shared/_Layout.cshtml" />
+      <File FileName="Gestion_Parc/Controllers/AccountController.cs" Line="108" Column="63" />
+      <File FileName="Gestion_Parc/Views/Role/Roles.cshtml" />
+      <File FileName="Gestion_Parc/DataDbContext/AppDbContxt.cs" />
+      <File FileName="Gestion_Parc/ViewModel/RegisterViewModel.cs" />
+      <File FileName="Gestion_Parc/IRepository/IServiceRepositoryBrand.cs" />
+      <File FileName="Gestion_Parc/IRepository/ServiceRepository/ServiceBrand.cs" />
+      <File FileName="Gestion_Parc/Seed/DefaultRole.cs" />
+      <File FileName="Gestion_Parc/Seed/DefaultUser.cs" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="Gestion_Parc_Informatique" expanded="True">
+            <Node name="Gestion_Parc" expanded="True">
+              <Node name="Views" expanded="True">
+                <Node name="Shared" expanded="True" />
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore>
+      <Breakpoint file="/Users/marouanekrizi/Projects/Gesiton_Parc_Informatique/Identtiy2/IRepository/ServiceRepository/ServiceLogDepartment.cs" relfile="Identtiy2/IRepository/ServiceRepository/ServiceLogDepartment.cs" line="85" column="1" />
+    </BreakpointStore>
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.ItemProperties.Gestion__Parc PreferredExecutionTarget="/Applications/Safari.app" />
+</Properties>

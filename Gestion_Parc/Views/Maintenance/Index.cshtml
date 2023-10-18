@@ -1,0 +1,95 @@
+@model Gestion_Parc.ViewModel.MaintenanceViewModel
+@inject UserManager<ApplicationUser> userManager
+@inject RoleManager<IdentityRole> roleManager
+@{
+    ViewData["Title"] = "Maintenances";
+}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0 text-dark alert alert-warning">Maintenances</h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-end alert alert-danger">
+                        <li class="breadcrumb-item"><a href="/Home/Index"><h3>Main Page</h3></a></li>
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex align-items-center justify-content-start">
+                        <h3 class="card-title" style="margin-right:20px">Liste des entretiens</h3>
+                        <div class="card-tools">
+                        </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+
+                        <table id="TableDepartments" class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="background-color:burlywood">Technicien</th>
+                                    <th style="background-color:burlywood">Utlisateur</th>
+                                    <th style="background-color:burlywood">Status</th>
+                                    <th style="background-color:burlywood">Materiel</th>
+                                    <th style="background-color:burlywood">Type</th>
+                                    <th style="background-color:burlywood">Date</th>
+                                    <th style="background-color:burlywood">Events</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var maintenance in Model.Maintenances)
+                                {
+                                    <tr>
+                                        <td>@maintenance.User.FullName</td>
+                                        <td>@((await userManager.FindByIdAsync(maintenance.BreakDown.UserId.ToString()))?.FullName)</td>
+                                        <td>
+                                            @switch (maintenance.Status)
+                                            {
+                                                case "Completed":
+                                                    <span class="badge alert alert-success" role="alert" style="padding: 8px; width: 90px;">@maintenance.Status</span>
+                                                    break;
+                                                case "InProgress":
+                                                    <span class="alert alert-warning" role="alert" style="padding: 5px; font-size: 14px; font-weight: bold">@maintenance.Status</span>
+                                                    break;
+                                                case "Reported":
+                                                    <span class="badge alert alert-danger" role="alert" style="padding: 8px; width: 90px;">@maintenance.Status</span>
+
+                                                    break;
+                                            }
+                                        </td>
+                                        <td>@maintenance.BreakDown.SubCategory</td>
+                                        <td>@maintenance.Type</td>
+                                        <td>@maintenance.Date</td>
+                                        <td>
+                                            @if (maintenance.Status == "InProgress")
+                                            {
+                                                @Html.ActionLink("Confirmer", "Confirm", new { id = maintenance.Id }, new { @class = "btn btn-primary" })
+                                            }
+                                            else
+                                            {
+                                                <i class='fa fa-thumbs-up' style='font-size:30px;color:green;margin:10px'></i>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+        </div>   <!-- /.row -->
+    </section>
+</div>

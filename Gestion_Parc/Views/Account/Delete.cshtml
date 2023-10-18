@@ -1,0 +1,61 @@
+@model Gestion_Parc.ViewModel.NewRegisterViewModel
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1 class="alert alert-warning">Supprimer</h1>
+
+<h3 class="alert alert-danger">Etes-vous sur de vouloir supprimer ceci?</h3>
+
+    <div>
+        <hr />
+        <div class="row">
+            <div class="col-md-6">
+                <dl class="row">
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.FullName)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => model.FullName)
+                    </dd>
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.Email)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => model.Email)
+                    </dd>
+
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.ActiveUser)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => model.ActiveUser)
+                    </dd>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => model.RoleName)
+                    </dd>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => model.DepartmentName)
+                    </dd>
+                </dl>
+            </div>
+            <div class="col-md-6">
+                <dl>
+                    
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.ImageUser)
+                    </dt>
+                    <dd class="col-sm-10">
+                        <img src="/Images/Users/@Model.ImageUser" class="img-thumbnail" style="width:150px;height:150px" />
+                    </dd>
+                 </dl>
+</div>
+        </div>
+                <form method="post">
+                    <input asp-for="Code" hidden />
+                    <input type="submit" value="Supprimer" class="btn btn-danger" />
+                    <a asp-action="Index" class="btn btn-dark">Retour a la liste</a>
+                </form>
+            </div>
+      

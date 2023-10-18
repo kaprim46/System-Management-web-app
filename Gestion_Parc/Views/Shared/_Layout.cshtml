@@ -1,0 +1,262 @@
+﻿@inject IAuthorizationService AuthorizationService
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>@ViewData["Title"] - Gestion_Parc</title>
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/Gestion_Parc.styles.css" asp-append-version="true" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.css">
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/dataTables.bootstrap5.min.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
+        <style>
+            .sub-menu-wrap {
+                position: absolute;
+                top: 100%;
+                right: 1%;
+                width: 320px;
+                max-height: 0px;
+                overflow: hidden;
+                z-index: 1;
+                transition: max-height 0.5s;
+            }
+
+                .sub-menu-wrap.open-menu {
+                    max-height: 400px;
+                }
+
+            .sub-menu {
+                background: rgba(29, 104, 152, 0.84);
+                margin: 10px 0 10px 10px;
+                padding: 20px;
+                border-radius: 5px;
+                box-shadow: -5px 5px 8px rgb(60, 67, 71), 5px 5px 8px rgb(60, 67, 71);
+            }
+
+            .user-info {
+                display: flex;
+                align-items: center;
+                color: whitesmoke;
+            }
+
+                .user-info h3 {
+                    font-weight: 500;
+                }
+
+                .user-info img {
+                    width: 60px;
+                    border-radius: 50%;
+                    margin-right: 15px;
+                }
+
+                .user-info hr {
+                    border: 0;
+                    height: 1px;
+                    width: 100%;
+                    background: #ccc;
+                    margin: 15px 0 10px;
+                }
+
+            .sub-menu-link {
+                display: flex;
+                align-items: center;
+                text-decoration: none;
+                color: #fff;
+                margin: 12px 0;
+            }
+
+                .sub-menu-link p {
+                    width: 100%;
+                }
+
+                .sub-menu-link img {
+                    width: 40px;
+                    background: #e5e5e5;
+                    border-radius: 50px;
+                    padding: 8px;
+                    margin-right: 15px;
+                }
+
+                .sub-menu-link span {
+                    font-size: 22px;
+                    transition: transform 0.5s;
+                }
+
+                .sub-menu-link:hover {
+                    transform: translateX(5px);
+                }
+
+            
+        </style>
+
+    </head>
+    <body>
+        @if (User.IsInRole("Admin"))
+        {
+            <header>
+                <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-dark border-bottom box-shadow mb-3">
+                    <div class="container-fluid">
+                        <a class="navbar-brand text-light" asp-area="" asp-controller="Home" asp-action="Index">System Management</a>
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                                aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                                <li class="nav-item">
+                                    <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-light" asp-area="" asp-controller="Role" asp-action="Roles">Services</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-light" asp-area="" asp-controller="Department" asp-action="Departments">Departments</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-light" asp-area="" asp-controller="Brand" asp-action="Brands">Marques</a>
+                                </li>
+                                <li class="nav-item dropdown text-light">
+                                    <a class="nav-link dropdown-toggle text-light" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Materiels
+                                    </a>
+                                    <ul class="dropdown-menu bg-dark" aria-labelledby="navbarDropdown">
+                                        <li><a class="dropdown-item text-light" asp-area="" asp-controller="Computer" asp-action="Index">Ordinateurs</a></li>
+                                        <li><a class="dropdown-item text-light" asp-area="" asp-controller="Printer" asp-action="Index">imprimantes</a></li>
+                                        <li><a class="dropdown-item text-light" asp-area="" asp-controller="Server" asp-action="Index">Serveurs</a></li>
+                                        <li><a class="dropdown-item text-light" asp-area="" asp-controller="Other" asp-action="Index">Autre</a></li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-light" asp-area="" asp-controller="BreakDown" asp-action="BreakDowns">Demande maintenance</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-light" asp-area="" asp-controller="Account" asp-action="Index">Utilisateurs</a>
+                                </li>
+                            </ul>
+                            <partial name="_LoginPartial" />
+                        </div>
+                    </div>
+                </nav>
+            </header>
+        }
+        @if (User.IsInRole("SERVICE EQUIPEMENT"))
+        {
+            <header>
+                <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-dark border-bottom box-shadow mb-3">
+                    <div class="container-fluid">
+                        <a class="navbar-brand text-light" asp-area="" asp-controller="Home" asp-action="Index">System Management</a>
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                                aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                                <li class="nav-item">
+                                    <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-light" asp-area="" asp-controller="Brand" asp-action="Brands">Marques</a>
+                                </li>
+                                <li class="nav-item dropdown text-light">
+                                    <a class="nav-link dropdown-toggle text-light" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Materiels
+                                    </a>
+                                    <ul class="dropdown-menu bg-dark" aria-labelledby="navbarDropdown">
+                                        <li><a class="dropdown-item text-light" asp-area="" asp-controller="Computer" asp-action="Index">Ordinateurs</a></li>
+                                        <li><a class="dropdown-item text-light" asp-area="" asp-controller="Printer" asp-action="Index">imprimantes</a></li>
+                                        <li><a class="dropdown-item text-light" asp-area="" asp-controller="Server" asp-action="Index">Serveurs</a></li>
+                                        <li><a class="dropdown-item text-light" asp-area="" asp-controller="Other" asp-action="Index">Autre</a></li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-light" asp-area="" asp-controller="BreakDown" asp-action="BreakDowns">Demande maintenance</a>
+                                </li>
+                            </ul>
+                            <partial name="_LoginPartial" />
+                        </div>
+                    </div>
+                </nav>
+            </header>
+        }
+        @if (User.IsInRole("SERVICE INFORMATIQUE"))
+        {
+            <header>
+                <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-dark border-bottom box-shadow mb-3">
+                    <div class="container-fluid">
+                        <a class="navbar-brand text-light" asp-area="" asp-controller="Home" asp-action="Index">System Management</a>
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                                aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                                <li class="nav-item">
+                                    <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-light" asp-area="" asp-controller="BreakDown" asp-action="BreakDowns">Demande Maintenance</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-light" asp-area="" asp-controller="Maintenance" asp-action="Index">Maintenance</a>
+                                </li>
+                            </ul>
+                            <partial name="_LoginPartial" />
+                        </div>
+                    </div>
+                </nav>
+            </header>
+        }
+        @if (User.IsInRole("EMPLOYE"))
+        {
+            <header>
+                <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-dark border-bottom box-shadow mb-3">
+                    <div class="container-fluid">
+                        <a class="navbar-brand text-light" asp-area="" asp-controller="Home" asp-action="Index">System Management</a>
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                                aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                                <li class="nav-item">
+                                    <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-light" asp-area="" asp-controller="BreakDown" asp-action="BreakDowns">Demande maintenance</a>
+                                </li>
+                            </ul>
+                            <partial name="_LoginPartial" />
+                        </div>
+                    </div>
+                </nav>
+            </header>
+        }
+
+        <div class="container" style="z-index:-1;">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+
+        <footer class="border-top footer text-muted">
+            <div class="container">
+                &copy; @DateTime.Now.Year - System Management
+            </div>
+        </footer>
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.all.min.js"></script>
+        <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+        <script>let submenu = document.getElementById("subMenu");
+            function toggleMenu() {
+                submenu.classList.toggle("open-menu");
+            }</script>
+        @await RenderSectionAsync("Scripts", required: false)
+    </body>
+</html>
+

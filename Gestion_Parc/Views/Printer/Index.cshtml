@@ -1,0 +1,370 @@
+@model Gestion_Parc.ViewModel.PrinterViewModel
+@inject UserManager<ApplicationUser> userManager
+@inject RoleManager<IdentityRole> roleManager
+@{
+    ViewData["Title"] = "Index";
+}
+<style>
+    /* Style the tab */
+    .tab {
+        overflow: hidden;
+        border: 1px solid #ccc;
+        background-color: #f1f1f1;
+    }
+
+        /* Style the buttons that are used to open the tab content */
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+        }
+
+            /* Change background color of buttons on hover */
+            .tab button:hover {
+                background-color: #ddd;
+            }
+
+            /* Create an active/current tablink class */
+            .tab button.active {
+                background-color: #ccc;
+            }
+
+    /* Style the tab content */
+    .tabcontent {
+        display: none;
+        padding: 6px 12px;
+        border: 1px solid #ccc;
+        border-top: none;
+    }
+</style>
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0 text-dark alert alert-warning">Imprimantes</h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-end alert alert-danger">
+                        <li class="breadcrumb-item"><a href="/Home/Index"><h3>Main Page</h3></a></li>
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex align-items-center justify-content-start">
+                        <h3 class="card-title" style="margin-right:20px">Imprimantes</h3>
+                        <div class="card-tools">
+                            <!-- Button trigger modal -->
+                            @if (User.IsInRole("SERVICE EQUIPEMENT"))
+                                {
+                                <a class="btn btn-outline-primary rounded-pill" asp-action="Create" asp-controller="Printer">
+                                    Ajouter Nouveau Imprimante
+                                </a>
+                                }
+                        </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <div class="tab">
+                            <button class="tablinks" onclick="openCity(event, 'Printers')" id="defaultOpen">Printers</button>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <button class="tablinks" onclick="openCity(event, 'LogPrinters')">Log Printers</button>
+                            }
+                        </div>
+                        <div id="Printers" class="tabcontent">
+
+                            <table id="TablePrinters" class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <td>Nom</td>
+                                        <td>Couleur</td>
+                                        <td>Department</td>
+                                        <td>Marque</td>
+                                        <td>Quantite</td>
+                                        @if (User.IsInRole("SERVICE EQUIPEMENT"))
+                                            {
+                                            <td>Events</td>
+                                            }
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var Printer in Model.Printers)
+                                    {
+                                        <tr>
+                                            <td>@Printer.MaterialName</td>
+                                            <td>@Printer.Color</td>
+                                            <td>@Printer.Department</td>
+
+                                            <td>
+                                                @switch (Printer.Brand)
+                                                {
+                                                    case "Epson":
+                                                        <span class="badge bg-success" style="width: 150px; height: 25px ">@Printer.Brand</span>
+                                                        break;
+                                                    case "Canon":
+                                                        <span class="badge bg-warning" style="width: 150px; height: 25px ">@Printer.Brand</span>
+                                                        break;
+                                                    case "HP":
+                                                        <span class="badge bg-info" style="width: 150px; height: 25px ">@Printer.Brand</span>
+                                                        break;
+                                                    default:
+                                                        <span class="badge bg-secondary" style="width: 150px; height: 25px ">@Printer.Brand</span>
+                                                        break;
+                                                }
+                                            </td>
+                                            <td>@Printer.Quantity</td>
+                                            @if (User.IsInRole("SERVICE EQUIPEMENT"))
+                                                {
+                                                <td>
+                                                    @Html.ActionLink("Edit", "Edit", new { id = Printer.MaterialId }, new { @class = "btn btn-primary" })
+                                                    <input type="button" class="btn btn-warning" onclick="Detail('@Printer.MaterialId', '@Printer.MaterialName', '@Printer.Brand',
+                                                      '@Printer.Description', '@Printer.Color', '@Printer.Quantity', '@Printer.Department',
+                                                       '@Printer.PrinterOutput', '@Printer.MaximumPrintSpeed', '@Printer.MaxPrintspeed', '@Printer.PrintingTechnology')"
+                                                           value="Details" data-bs-toggle="modal" data-bs-target="#exampleModal" />
+                                                    <input type="button" class="btn btn-danger" onclick="Delete('@Printer.MaterialId')" value="Delete" />
+
+
+                                                </td>
+                                                }
+                                        </tr>
+                                    }
+
+                                </tbody>
+                            </table>
+                        </div>
+                        @if (User.IsInRole("Admin"))
+                        {
+
+
+                            <div id="LogPrinters" class="tabcontent">
+                                <table id="TableLogPrinters" class="table table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <td>User</td>
+                                            <td>Computer</td>
+                                            <td>Department</td>
+                                            <td>Action</td>
+                                            <td>Date</td>
+                                            <td>Events</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var logPrinter in Model.LogPrinters)
+                                        {
+                                            <tr>
+                                                <td>@((await userManager.FindByIdAsync(logPrinter.UserId.ToString()))?.FullName)</td>
+                                                <td>@logPrinter.Printer.MaterialName</td>
+                                                <td>@logPrinter.Printer.Department</td>
+                                                <td>
+                                                    @switch (logPrinter.Action)
+                                                    {
+                                                        case "Create":
+                                                            <span class="badge bg-success" style="width: 300px; height: 25px ">@logPrinter.Action</span>
+                                                            break;
+                                                        case "Update":
+                                                            <span class="badge bg-warning" style="width: 300px; height: 25px ">@logPrinter.Action</span>
+                                                            break;
+                                                        case "Delete":
+                                                            <span class="badge bg-danger" style="width: 300px; height: 25px ">@logPrinter.Action</span>
+                                                            break;
+                                                    }
+                                                </td>
+                                                <td>@logPrinter.Date</td>
+                                                <td>
+                                                    <input type="button" class="btn btn-danger" onclick="DeleteLog('@logPrinter.Id')" value="Delete" />
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+
+
+
+                        }
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </section>
+    <!-- /.content -->
+</div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Printer Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="row mb-1">
+                                <input type="text" class="form-control" hidden asp-for="NewPrinter.MaterialId" id="materialId" />
+                                <div class="col-sm-4">
+                                    <p class="mb-0">@Html.DisplayNameFor(model => model.NewPrinter.MaterialName)</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" asp-for="@Printers.MaterialName" id="materialName" readonly />
+                                </div>
+                            </div>
+                            <div class="row mb-1">
+                                <div class="col-sm-4">
+                                    <p class="mb-0">@Html.DisplayNameFor(model => model.NewPrinter.MaximumPrintSpeed)</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" asp-for="@Printers.MaximumPrintSpeed" id="maximumPrintSpeed" readonly />
+                                </div>
+                            </div>
+                            <div class="row mb-1">
+                                <div class="col-sm-4">
+                                    <p class="mb-0">@Html.DisplayNameFor(model => model.NewPrinter.Color)</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" asp-for="@Printers.Color" id="color" readonly />
+                                </div>
+                            </div>
+                            <div class="row mb-1">
+                                <div class="col-sm-4">
+                                    <p class="mb-0">@Html.DisplayNameFor(model => model.NewPrinter.PrintingTechnology)</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" asp-for="@Printers.PrintingTechnology" id="printingTechnology" readonly />
+                                </div>
+                            </div>
+                            <div class="row mb-1">
+                                <div class="col-sm-4">
+                                    <p class="mb-0">@Html.DisplayNameFor(model => model.NewPrinter.Department)</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" asp-for="@Printers.Department" id="department" readonly />
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="row mb-1">
+                                <div class="col-sm-4">
+                                    <p class="mb-0">@Html.DisplayNameFor(model => model.NewPrinter.MaxPrintspeed)</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" asp-for="@Printers.MaxPrintspeed" id="maxPrintspeed" readonly />
+                                </div>
+                            </div>
+                            <div class="row mb-1">
+                                <div class="col-sm-4">
+                                    <p class="mb-0">@Html.DisplayNameFor(model => model.NewPrinter.PrinterOutput)</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" asp-for="@Printers.PrinterOutput" id="printerOutput" readonly />
+                                </div>
+                            </div>
+                            <div class="row mb-1">
+                                <div class="col-sm-4">
+                                    <p class="mb-0">@Html.DisplayNameFor(model => model.NewPrinter.Quantity)</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" asp-for="@Printers.Quantity" id="quantity" readonly />
+                                </div>
+                            </div>
+                            <div class="row mb-1">
+                                <div class="col-sm-4">
+                                    <p class="mb-0">@Html.DisplayNameFor(model => model.NewPrinter.Brand)</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" asp-for="@Printers.Brand" id="brand" readonly />
+                                </div>
+                            </div>
+                            <div class="row mb-1">
+                                <div class="col-sm-4">
+                                    <p class="mb-0">@Html.DisplayNameFor(model => model.NewPrinter.Description)</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <textarea class="form-control" asp-for="@Printers.Description" id="description" readonly ></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+
+    @if (!string.IsNullOrEmpty(Context.Session.GetString(Helper.MsgType)))
+    {
+        if (Context.Session.GetString("msgType") == Helper.Success)
+        {
+            <script>
+                Swal.fire({
+                    icon: '@Helper.Success',
+                    title: '@Context.Session.GetString(Helper.Title)',
+                    text: '@Html.Raw(Context.Session.GetString(Helper.Msg))',
+                    ConfirmButtonText: 'Done'
+
+                })
+            </script>
+
+        }
+        else
+        {
+            <script>
+                Swal.fire({
+                    icon: '@Helper.Error',
+                    title: '@Context.Session.GetString(Helper.Title)',
+                    text: '@Html.Raw(Context.Session.GetString(Helper.Msg))',
+                    ConfirmButtonText: 'Done'
+
+                })
+            </script>
+        }
+        Context.Session.SetString("msgType", "");
+    }
+}
+<script>
+    function Detail(id, name, brand, description, color, quantity, department, printOutput, maximumPrintSpeed, maxPrintspeed, printingTechnology) {
+        document.getElementById("materialId").value = id;
+        document.getElementById("materialName").value = name;
+        document.getElementById("brand").value = brand;
+        document.getElementById("description").value = description;
+        document.getElementById("color").value = color;
+        document.getElementById("quantity").value = quantity;
+        document.getElementById("department").value = department;
+        document.getElementById("printerOutput").value = printOutput; 
+        document.getElementById("maximumPrintSpeed").value = maximumPrintSpeed; 
+        document.getElementById("maxPrintspeed").value = maxPrintspeed;
+        document.getElementById("printingTechnology").value = printingTechnology;
+
+    }
+    </script>
+<script src="~/Modules/Printers.js"></script>

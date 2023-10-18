@@ -1,0 +1,78 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.15" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.15">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.15" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.15">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.15" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.15" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.15" />
+    <PackageReference Include="Microsoft.AspNetCore.Session" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="6.0.15" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="DataDbContext\" />
+    <None Remove="ViewModel\" />
+    <None Remove="Views\Account\" />
+    <None Remove="Views\Role\" />
+    <None Remove="IRepository\" />
+    <None Remove="IRepository\ServiceRepository\" />
+    <None Remove="Views\Department\" />
+    <None Remove="Views\Brand\" />
+    <None Remove="Seed\" />
+    <None Remove="Views\Computer\" />
+    <None Remove="Views\Printer\" />
+    <None Remove="Views\Statistics\" />
+    <None Remove="Views\Server\" />
+    <None Remove="Views\Other\" />
+    <None Remove="Views\BreakDown\" />
+    <None Remove="Views\Maintenance\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DataDbContext\" />
+    <Folder Include="ViewModel\" />
+    <Folder Include="Views\Account\" />
+    <Folder Include="wwwroot\Images\" />
+    <Folder Include="wwwroot\Images\Users\" />
+    <Folder Include="Views\Role\" />
+    <Folder Include="wwwroot\Modules\" />
+    <Folder Include="IRepository\" />
+    <Folder Include="IRepository\ServiceRepository\" />
+    <Folder Include="Views\Department\" />
+    <Folder Include="wwwroot\Admin\" />
+    <Folder Include="wwwroot\Images\Icons\" />
+    <Folder Include="Views\Brand\" />
+    <Folder Include="Seed\" />
+    <Folder Include="Views\Computer\" />
+    <Folder Include="Views\Printer\" />
+    <Folder Include="Views\Statistics\" />
+    <Folder Include="Views\Server\" />
+    <Folder Include="Views\Other\" />
+    <Folder Include="Views\BreakDown\" />
+    <Folder Include="Views\Maintenance\" />
+    <Folder Include="wwwroot\Images\Content\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="wwwroot\Images\" />
+    <Content Remove="wwwroot\Images\Users\" />
+    <Content Remove="wwwroot\Modules\" />
+    <Content Remove="wwwroot\Admin\" />
+    <Content Remove="wwwroot\Images\Icons\" />
+    <Content Remove="wwwroot\Images\Content\" />
+  </ItemGroup>
+</Project>

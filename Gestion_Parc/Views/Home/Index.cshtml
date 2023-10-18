@@ -1,0 +1,175 @@
+﻿@model Gestion_Parc.ViewModel.HomeViewModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+<style>
+    .small-box {
+        position: relative;
+        color: #fff;
+        padding: 20px 10px 40px;
+        margin: 20px 0px;
+        border-radius: 5px;
+    }
+
+        .small-box:hover {
+            text-decoration: none;
+            color: #f1f1f1;
+        }
+
+            .small-box:hover .icon i {
+                font-size: 100px;
+                transition: 1s;
+                -webkit-transition: 1s;
+            }
+
+        .small-box .inner {
+            padding: 5px 10px 0 10px;
+        }
+
+        .small-box h3 {
+            font-size: 27px;
+            font-weight: bold;
+            margin: 0 0 8px 0;
+            white-space: nowrap;
+            padding: 0;
+            text-align: left;
+        }
+
+        .small-box p {
+            font-size: 15px;
+        }
+
+        .small-box .icon {
+            position: absolute;
+            top: auto;
+            bottom: 5px;
+            right: 5px;
+            z-index: 0;
+            font-size: 72px;
+            color: rgba(0, 0, 0, 0.15);
+        }
+
+        .small-box .small-box-footer {
+            position: absolute;
+            left: 0px;
+            bottom: 0px;
+            text-align: center;
+            padding: 3px 0;
+            color: rgba(255, 255, 255, 0.8);
+            background: rgba(0, 0, 0, 0.1);
+            width: 100%;
+            text-decoration: none;
+        }
+
+        .small-box:hover .small-box-footer {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+    .bg-info {
+        background-color: #00c0ef !important;
+    }
+
+    .bg-succes {
+        background-color: #00a65a !important;
+    }
+
+    .bg-warning {
+        background-color: #f39c12 !important;
+    }
+
+    .bg-danger {
+        background-color: #d9534f !important;
+    }
+    .content-wrapper {
+        background-color: rgba(168, 201, 214, 0.4);
+    }
+    .image-background {
+        background-image: url(/Images/Content/Image-Company-Background.jpg);
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+        height: 450px;
+    }
+    .home-content{
+        margin-top: 20px;
+    }
+</style>
+@{
+
+    int Add(int a, int b, int c, int d)
+    {
+        return a + b + c + d;
+    }
+}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-3 col-6">
+                    <!-- small box -->
+                    <div class="small-box bg-info">
+                        <div class="inner">
+                            <h3>@Model.Users.Count</h3>
+
+                            <p>Employés</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fa fa-users"></i>
+                        </div>
+                        <a asp-area="" asp-controller="Account" asp-action="Index" class="small-box-footer">Plus d'informations <i class="fa fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+                <!-- ./col -->
+                <div class="col-lg-3 col-6">
+                    <!-- small box -->
+                    <div class="small-box bg-success">
+                        <div class="inner">
+                            <h3>@Add(Model.Printers.Count, Model.Computers.Count, Model.Servers.Count, Model.Others.Count)</h3>
+
+                            <p>Statistiques de materiels</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fa fa-pie-chart"></i>
+                        </div>
+                        <a asp-area="" asp-controller="Statistics" asp-action="Materials" class="small-box-footer">Plus d'informations <i class="fa fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+                <!-- ./col -->
+                <div class="col-lg-3 col-6">
+                    <!-- small box -->
+                    <div class="small-box bg-warning">
+                        <div class="inner">
+                            <h3>@Model.Computers.Count</h3>
+
+                            <p>Ordinateurs</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fa fa-laptop"></i>
+                        </div>
+                        <a href="#" class="small-box-footer">Plus d'informations <i class="fa fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+                <!-- ./col -->
+                <div class="col-lg-3 col-6">
+                    <!-- small box -->
+                    <div class="small-box bg-danger">
+                        <div class="inner">
+                            <h3>@Model.Printers.Count</h3>
+
+                            <p>Imprimantes</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fa fa-product-hunt"></i>
+                        </div>
+                        <a href="#" class="small-box-footer">Plus d'informations <i class="fa fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+            </div>
+         </div>
+    </section>
+            <!-- ./col -->
+</div>
+<div class="home-content">
+    <div class="image-background"></div>
+</div>

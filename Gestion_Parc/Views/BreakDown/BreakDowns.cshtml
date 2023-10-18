@@ -1,0 +1,556 @@
+@model Gestion_Parc.ViewModel.BreakDownViewModel
+@using Newtonsoft.Json
+@inject UserManager<ApplicationUser> userManager
+@inject RoleManager<IdentityRole> roleManager
+@{
+    ViewData["Title"] = "BreakDowns";
+}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0 text-dark alert alert-warning">Pannes</h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-end alert alert-danger">
+                        <li class="breadcrumb-item"><a href="/Home/Index"><h3>Main Page</h3></a></li>
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+
+    @if (User.IsInRole("Admin") || User.IsInRole("SERVICE INFORMATIQUE"))
+    {
+        <!-- Main content -->
+        <section class="content">
+            <div class="row">
+                <div class="col-8">
+                    <div class="card">
+                        <div class="card-header d-flex align-items-center justify-content-start">
+                            <h3 class="card-title" style="margin-right:20px">Pannes</h3>
+                            <div class="card-tools">
+                                @if (!User.IsInRole("SERVICE INFORMATIQUE"))
+                                {
+                                    <!-- Button trigger modal -->
+                                    <button type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="Reset()">
+                                        Reclamer Nouveau Pannes
+                                    </button>
+                                }
+
+                            </div>
+                            <div class="card-tools">
+                                @if (User.IsInRole("SERVICE INFORMATIQUE"))
+                                {
+                                    <a class="btn btn-outline-dark rounded-pill float-end" asp-area="" asp-controller="Maintenance" asp-action="Index">Maintenance</a>
+                                }
+
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+
+                            <table id="TableDepartments" class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th style="background-color:burlywood">Utlisateur</th>
+                                        <th style="background-color:burlywood">Status</th>
+                                        <th style="background-color:burlywood">Type</th>
+                                        <th style="background-color:burlywood">Category</th>
+                                        <th style="background-color:burlywood">Date</th>
+
+                                        <th style="background-color:burlywood">Events</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var breakDown in Model.AllBreakDowns)
+                                    {
+                                        <tr>
+                                            <td>@breakDown.User.FullName</td>
+                                            <td>
+                                                @switch (breakDown.Status)
+                                                {
+                                                    case "Completed":
+                                                        <span class="badge alert alert-success" role="alert" style="padding: 8px; width: 90px;">@breakDown.Status</span>
+                                                        break;
+                                                    case "InProgress":
+                                                        <span class="alert alert-warning" role="alert" style="padding: 5px;font-size:14px;font-weight:bold">@breakDown.Status</span>
+                                                        break;
+                                                    case "Reported":
+                                                        <span class="badge alert alert-danger" role="alert" style="padding: 8px; width: 90px; font-size: 14px; font-weight: bold ">@breakDown.Status</span>
+
+                                                        break;
+                                                }
+                                            </td>
+                                            <td>@breakDown.Type</td>
+                                            <td>@breakDown.Category</td>
+                                            <td>@breakDown.Date</td>
+                                            <td>
+                                                <input type="button" class="btn btn-warning" onclick="Detail('@breakDown.Id', '@breakDown.Date',
+                                                      '@breakDown.Type', '@breakDown.Category', '@breakDown.SubCategory', '@breakDown.Description',
+                                                       '@breakDown.User.FullName', '@breakDown.User.DepartmentName', '@breakDown.User.ImageUser')"
+                                                       value="Details" data-bs-toggle="modal" data-bs-target="#DetailModal" />
+                                                @if (User.IsInRole("SERVICE INFORMATIQUE") && breakDown.Status == "Reported")
+                                                 {
+                                                    <a asp-action="Create" asp-controller="Maintenance" asp-route-id="@breakDown.Id" class="btn btn-dark">Intervene</a>
+                                                 }
+
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <div class="col-4">
+                    <div class="card">
+                        <div class="card-header d-flex align-items-center justify-content-start">
+                            <h3 class="card-title" style="margin-right:20px">Statistiques de pannes</h3>
+                        </div>
+                        <div class="card-body">
+                            <h5>Reported <span class="badge bg-danger">@Model.AllReported.Count</span></h5>
+                            <h5>In Progress <span class="badge bg-warning">@Model.AllProgressed.Count</span></h5>
+                            <h5>Completed <span class="badge bg-success">@Model.AllCompleted.Count</span></h5>
+                        </div>
+                    </div>
+                    <!-- /.col -->
+                </div>
+            </div>   <!-- /.row -->
+        </section>
+        <!-- /.content -->
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="title">Reclamer Nouveau Panne</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form asp-action="BreakDowns" asp-controller="BreakDown" method="post">
+
+                            <div class="form-group">
+
+                                <label asp-for="NNewBreakDown.Type" class="control-label"></label>
+                                @{
+                                    // Retrieve the select list from ViewBag/ViewData
+                                    var breakDowns = ViewBag.BreackDownType as List<SelectListItem>;
+                                }
+                                <select asp-for="NNewBreakDown.Type" asp-items="@(breakDowns)" class="form-control" id="type">
+                                    <option value="">-- Choisir Type --</option>
+                                </select>
+                                <span asp-validation-for="NNewBreakDown.Type" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="NNewBreakDown.Category" class="control-label"></label>
+                                @{
+                                    // Retrieve the select list for the outer dropdown from ViewBag
+                                    var categories = ViewBag.Category as List<SelectListItem>;
+                                }
+                                <select id="outerDropdown" asp-for="NNewBreakDown.Category" asp-items="@(categories)" class="form-control">
+                                    <option value="">-- Choisir Category --</option>
+                                </select>
+                                <span asp-validation-for="NNewBreakDown.Category" class="text-danger"></span>
+                            </div>
+                            <div class="form-group" id="computer">
+                                <label asp-for="NNewBreakDown.SubCategory" class="control-label"></label>
+                                <select id="computerDropdown" asp-for="NNewBreakDown.SubCategory" class="form-control">
+                                    <option value="">-- Choisir Materiel --</option>
+                                </select>
+                                <span asp-validation-for="NNewBreakDown.SubCategory" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="NNewBreakDown.Description" class="control-label"></label>
+                                <textarea asp-for="NNewBreakDown.Description" class="form-control" id="description"></textarea>
+                                <span asp-validation-for="NNewBreakDown.Description" class="text-danger"></span>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                                <input type="submit" class="btn btn-success" value="Enregistrer" id="btnSave" />
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- Main content -->
+        <section class="content">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header d-flex align-items-center justify-content-start">
+                            <h3 class="card-title" style="margin-right:20px">Pannes</h3>
+                            <div class="card-tools">
+                                <!-- Button trigger modal -->
+                                <button type="button" class="btn btn-outline-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="Reset()">
+                                    Reclamer Nouveau Panne
+                                </button>
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+
+                            <table id="TableDepartments" class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th style="background-color:burlywood">Utilisateur</th>
+                                        <th style="background-color:burlywood">Date</th>
+                                        <th style="background-color:burlywood">Type</th>
+                                        <th style="background-color:burlywood">Note</th>
+                                        <th style="background-color:burlywood">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var breakDown in Model.AllBreakDownsForEachUser)
+                                    {
+                                        <tr>
+                                            <td>@breakDown.User.FullName</td>
+                                            <td>@breakDown.Date</td>
+                                            <td>@breakDown.Type</td>
+                                            <td>@breakDown.Category</td>
+                                            <td>
+                                                @switch (breakDown.Status)
+                                                {
+                                                    case "Completed":
+                                                        <span class="badge alert alert-success" role="alert" style="padding: 8px; width: 90px;;">@breakDown.Status</span>
+                                                        break;
+                                                    case "InProgress":
+                                                        <span class="alert alert-warning" role="alert" style="padding: 5px; font-size: 14px;">@breakDown.Status</span>
+                                                        break;
+                                                    case "Reported":
+                                                        <span class="badge alert alert-danger" role="alert" style="padding: 8px; width: 90px;">@breakDown.Status</span>
+
+                                                        break;
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </section>
+        <!-- /.content -->
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="title">Reclamer Nouveau Panne</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form asp-action="BreakDowns" asp-controller="BreakDown" method="post">
+
+                            <div class="form-group">
+
+                                <label asp-for="NNewBreakDown.Type" class="control-label"></label>
+                                @{
+                                    // Retrieve the select list from ViewBag/ViewData
+                                    var breakDowns = ViewBag.BreackDownType as List<SelectListItem>;
+                                }
+                                <select asp-for="NNewBreakDown.Type" asp-items="@(breakDowns)" class="form-control" id="type">
+                                    <option value="">-- Choisir Type --</option>
+                                </select>
+                                <span asp-validation-for="NNewBreakDown.Type" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="NNewBreakDown.Category" class="control-label"></label>
+                                @{
+                                    // Retrieve the select list for the outer dropdown from ViewBag
+                                    var categories = ViewBag.Category as List<SelectListItem>;
+                                }
+                                <select id="outerDropdown" asp-for="NNewBreakDown.Category" asp-items="@(categories)" class="form-control">
+                                    <option value="">-- Choisir Category --</option>
+                                </select>
+                                <span asp-validation-for="NNewBreakDown.Category" class="text-danger"></span>
+                            </div>
+                            <div class="form-group" id="computer">
+                                <label asp-for="NNewBreakDown.SubCategory" class="control-label"></label>
+                                <select id="computerDropdown" asp-for="NNewBreakDown.SubCategory" class="form-control">
+                                    <option value="">-- Choisir Materiel --</option>
+                                </select>
+                                <span asp-validation-for="NNewBreakDown.SubCategory" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="NNewBreakDown.Description" class="control-label"></label>
+                                <textarea asp-for="NNewBreakDown.Description" class="form-control" id="description"></textarea>
+                                <span asp-validation-for="NNewBreakDown.Description" class="text-danger"></span>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                                <input type="submit" class="btn btn-success" value="Enregistrer" id="btnSave" />
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="modal fade" id="DetailModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Details de panne</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="row">
+                            <div class="form-group">
+                                <img id="image" src="" class="img-thumbnail" style="width:350px;height:350px;" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="row">
+                            <div class="row mb-1">
+                                <input type="text" class="form-control" hidden asp-for="NNewBreakDown.Id" id="id" />
+                                <div class="col-sm-4">
+                                    <p class="mb-0">@Html.DisplayNameFor(model => model.NNewBreakDown.FullName)</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="name" readonly />
+                                </div>
+                            </div>
+                            <div class="row mb-1">
+                                <div class="col-sm-4">
+                                    <p class="mb-0">@Html.DisplayNameFor(model => model.NNewBreakDown.DepartmentName)</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="department" readonly />
+                                </div>
+                            </div>
+                            <div class="row mb-1">
+                                <div class="col-sm-4">
+                                    <p class="mb-0">@Html.DisplayNameFor(model => model.NNewBreakDown.Type)</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="type1" readonly />
+                                </div>
+                            </div>
+                            <div class="row mb-1">
+                                <div class="col-sm-4">
+                                    <p class="mb-0">@Html.DisplayNameFor(model => model.NNewBreakDown.Category)</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="category" readonly />
+                                </div>
+                            </div>
+                            <div class="row mb-1">
+                                <div class="col-sm-4">
+                                    <p class="mb-0">@Html.DisplayNameFor(model => model.NNewBreakDown.SubCategory)</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="subCategory" readonly />
+                                </div>
+                            </div>
+                            <div class="row mb-1">
+                                <div class="col-sm-4">
+                                    <p class="mb-0">@Html.DisplayNameFor(model => model.NNewBreakDown.Date)</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="date" readonly />
+                                </div>
+                            </div>
+                            <div class="row mb-1">
+                                <div class="col-sm-4">
+                                    <p class="mb-0">@Html.DisplayNameFor(model => model.NNewBreakDown.Description)</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <textarea class="form-control" id="description1" readonly></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+
+    @if (!string.IsNullOrEmpty(Context.Session.GetString(Helper.MsgType)))
+    {
+        if (Context.Session.GetString("msgType") == Helper.Success)
+        {
+            <script>
+                Swal.fire({
+                    icon: '@Helper.Success',
+                    title: '@Context.Session.GetString(Helper.Title)',
+                    text: '@Html.Raw(Context.Session.GetString(Helper.Msg))',
+                    ConfirmButtonText: 'Done'
+
+                })
+            </script>
+
+        }
+        else
+        {
+            <script>
+                Swal.fire({
+                    icon: '@Helper.Error',
+                    title: '@Context.Session.GetString(Helper.Title)',
+                    text: '@Html.Raw(Context.Session.GetString(Helper.Msg))',
+                    ConfirmButtonText: 'Done'
+
+                })
+            </script>
+        }
+        Context.Session.SetString("msgType", "");
+    }
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+<script>GetComputer = () => {
+        $.ajax({
+            url: `/BreakDown/GetComputer`,
+            Method: 'GET',
+            cache: false,
+            success: (result) => {
+                let computer = '';
+                computer += `<option value="">--------------- Choisir Ordinateur [${result.length}] --------------</option>`;
+
+                for (x in result) {
+                    computer += `<option value="${result[x].materialName}">${result[x].materialName}</option>`;
+                }
+                $('#computerDropdown').html(computer);
+            }
+        });
+    }
+
+    Getprinter = () => {
+        $.ajax({
+            url: `/BreakDown/GetPrinter`,
+            Method: 'GET',
+            cache: false,
+            success: (result) => {
+                let printer = '';
+                printer += `<option value="">--------------- Choisir Imprimante [${result.length}] --------------</option>`;
+
+                for (x in result) {
+                    printer += `<option value="${result[x].materialName}">${result[x].materialName}</option>`;
+                }
+                $('#computerDropdown').html(printer);
+            }
+
+        });
+
+    }
+
+    GetServer = () => {
+        $.ajax({
+            url: `/BreakDown/GetServer`,
+            Method: 'GET',
+            cache: false,
+            success: (result) => {
+                let server = '';
+                server += `<option value="">--------------- Choisir Serveur <span style="background-color:green">[${result.length}]</span> --------------</option>`;
+
+                for (x in result) {
+                    server += `<option value="${result[x].materialName}">${result[x].materialName}</option>`;
+                }
+                $('#computerDropdown').html(server);
+            }
+        });
+
+    }
+
+    GetOther = () => {
+        $.ajax({
+            url: `/BreakDown/GetOther`,
+            Method: 'GET',
+            cache: false,
+            success: (result) => {
+                let other = '';
+                other += `<option value="">--------------- Autres [${result.length}] --------------</option>`;
+
+                for (x in result) {
+                    other += `<option value="${result[x].materialName}">${result[x].materialName}</option>`;
+                }
+                $('#computerDropdown').html(other);
+            }
+        });
+
+    }
+
+    Detail = (id, date, type, category, subCategory, description, name, department, image) => {
+        document.getElementById("image").src = "/Images/Users/" + image;
+        document.getElementById("id").value = id;
+        document.getElementById("date").value = date;
+        document.getElementById("type1").value = type;
+        document.getElementById("category").value = category;
+        document.getElementById("subCategory").value = subCategory;
+        document.getElementById("description1").value = description;
+        document.getElementById("name").value = name;
+        document.getElementById("department").value = department;
+    }
+
+   
+
+    Reset = () => {
+        document.getElementById("type").selectedIndex = 0;
+        document.getElementById("outerDropdown").selectedIndex = 0;
+        document.getElementById("description").value = "";
+        document.getElementById("computerDropdown").selectedIndex = 0;
+
+        $(document).ready(function () {
+            $('#computer').hide();
+            $('#outerDropdown').change(function () {
+                var selectedCategory = $(this).val().trim();
+
+
+                if (selectedCategory === 'Computer') {
+                    GetComputer();
+                    $('#computer').show();
+
+                } else if (selectedCategory === 'Printer') {
+                    Getprinter();
+                    $('#computer').show();
+                } else if (selectedCategory === 'Server') {
+                    GetServer();
+                    $('#computer').show();
+
+
+                } else if (selectedCategory === 'Other') {
+                    GetOther();
+                    $('#computer').show();
+                }
+            });
+        });
+
+
+    }</script>
+
